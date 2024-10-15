@@ -86,8 +86,12 @@
                         || lyric.type === kanaType.OTHERS && showOtherKana"
                 :isFirst="jndex === 0"
                 :space-emphasize="spaceEmphasize"
-                :isRead="isRecording ? index < timeline.length - 1 : Math.floor(lyricSchedule[index]) < Math.floor(currentSecond)"
-                :isReading="isRecording ? index === timeline.length - 1 : Math.floor(lyricSchedule[index]) === Math.floor(currentSecond)"
+                :isRead="isRecording
+                ? index < timeline.length - 1
+                : lyricSchedule && index < lyricSchedule.length && Math.floor(lyricSchedule[index]) < Math.floor(currentSecond)"
+                :isReading="isRecording
+                ? index === timeline.length - 1
+                :lyricSchedule && index < lyricSchedule.length && Math.floor(lyricSchedule[index]) === Math.floor(currentSecond)"
               ></core-ruby>
             </span>
           </span>

@@ -53,11 +53,17 @@ class LyricsDB {
   }
 
   async getById(id) {
-    await this.db.open();
-    const result = await this.db.getData(id);
-    await this.db.close();
+    try {
+      await this.db.open();
+      const result = await this.db.getData(id);
+      await this.db.close();
+      return result;
+    }
+    catch {
+      return null;
+    }
 
-    return result;
+
   }
 
   async delete(id) {
