@@ -44,7 +44,7 @@
 
     <v-spacer></v-spacer>
 
-    <v-chip>v0.9.0</v-chip>
+    <v-chip>v0.9.1</v-chip>
     <v-tooltip location="bottom">
       <template v-slot:activator="{ props }">
         <div v-bind="props">
