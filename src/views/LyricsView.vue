@@ -86,12 +86,8 @@
                         || lyric.type === kanaType.OTHERS && showOtherKana"
                 :isFirst="jndex === 0"
                 :space-emphasize="spaceEmphasize"
-                :isRead="isRecording
-                ? index < timeline.length - 1
-                : lyricSchedule && index < lyricSchedule.length && Math.floor(lyricSchedule[index]) < Math.floor(currentSecond)"
-                :isReading="isRecording
-                ? index === timeline.length - 1
-                :lyricSchedule && index < lyricSchedule.length && Math.floor(lyricSchedule[index]) === Math.floor(currentSecond)"
+                :isRead="isRead(index)"
+                :isReading="isReading(index)"
               ></core-ruby>
             </span>
           </span>
@@ -327,6 +323,38 @@ const formatTime = (seconds) => {
 const readingIndex = computed(() => {
   return null;
 });
+
+const isRead = (index) => {
+  if(props.isRecording) {
+    return index < props.timeline.length - 1;
+  }
+
+  if(props.lyricSchedule) {
+    if(index+1 < props.lyricSchedule.length) {
+      return props.lyricSchedule[index + 1] <= props.currentSecond;
+    }
+  }
+
+  return false;
+}
+
+const isReading = (index) => {
+  if(props.isRecording) {
+    return index === props.timeline.length - 1;
+  }
+
+  if(props.lyricSchedule) {
+    if(index < props.lyricSchedule.length) {
+      const lyricSeconds = props.lyricSchedule[index];
+      const nextLyricSceonds = (index + 1 < props.lyricSchedule.length)
+        ? props.lyricSchedule[index + 1] : Number.MAX_SAFE_INTEGER;
+
+      return lyricSeconds <= props.currentSecond && props.currentSecond <= nextLyricSceonds;
+    }
+  }
+
+  return false;
+}
 
 </script>
 
