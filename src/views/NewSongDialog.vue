@@ -51,6 +51,7 @@
             label="Lyrics*"
             v-model="lyrics"
             :rules="[requiredRule]"
+            auto-grow
           ></v-textarea>
           <v-text-field
             label="YoutubeLink*"
