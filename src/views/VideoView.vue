@@ -221,6 +221,7 @@ onMounted(async () => {
 const updateRecordStatus = () => {
   if(!props.isRecording) {
     seekTo(0);
+    playVideo();
   }
   emits('update-recording', !props.isRecording);
 }
