@@ -30,7 +30,8 @@
           <template v-slot:activator="{ props }">
             <v-icon
               v-bind="props"
-              size="large"
+              size="x-large"
+              class="mx-1"
               @click="resetRecord"
             >mdi-home</v-icon>
           </template>
@@ -40,7 +41,8 @@
           <template v-slot:activator="{ props }">
             <v-icon
               v-bind="props"
-              size="large"
+              size="x-large"
+              class="mx-1"
               @click="setRecord"
             >mdi-play</v-icon>
           </template>
@@ -50,7 +52,8 @@
           <template v-slot:activator="{ props }">
             <v-icon
               v-bind="props"
-              size="large"
+              size="x-large"
+              class="mx-1"
               @click="stepBack"
             >mdi-step-backward</v-icon>
           </template>
@@ -61,7 +64,8 @@
           <template v-slot:activator="{ props }">
             <v-icon
               v-bind="props"
-              size="large"
+              size="x-large"
+              class="mx-1"
               @click="saveRecord"
             >mdi-content-save</v-icon>
           </template>
