@@ -17,22 +17,79 @@
         cols="auto"
         align="end"
       >
-        <v-btn
-          class="mr-4"
-          icon
-          @click="openNewSongDialog"
-        >
-          <v-icon>mdi-plus-thick</v-icon>
-        </v-btn>
+        <v-menu>
+          <template v-slot:activator="{ props }">
+            <v-btn
+              class="mr-4"
+              icon
+              v-bind="props"
+            >
+              <v-icon>mdi-cog</v-icon>
+            </v-btn>
+          </template>
 
-        <v-btn
-          class="mr-4"
-          :disabled="!selectedSongId"
-          icon
-          @click="deleteSong"
-        >
-          <v-icon>mdi-delete</v-icon>
-        </v-btn>
+          <v-tooltip location="left">
+            <template v-slot:activator="{ props }">
+              <div v-bind="props">
+                <v-btn
+                  class="mt-4"
+                  icon
+                  @click="openNewSongDialog"
+                >
+                  <v-icon>mdi-plus-thick</v-icon>
+                </v-btn>
+              </div>
+            </template>
+            <span>Add new song</span>
+          </v-tooltip>
+
+          <v-tooltip location="left">
+            <template v-slot:activator="{ props }">
+              <div v-bind="props">
+                <v-btn
+                  class="mt-4"
+                  icon
+                  @click="importSong"
+                >
+                  <v-icon>mdi-import</v-icon>
+                </v-btn>
+              </div>
+            </template>
+            <span>Import new songs</span>
+          </v-tooltip>
+
+          <v-tooltip location="left">
+            <template v-slot:activator="{ props }">
+              <div v-bind="props">
+                <v-btn
+                  class="mt-4"
+                  icon
+                  @click="exportSong"
+                >
+                  <v-icon>mdi-export</v-icon>
+                </v-btn>
+              </div>
+            </template>
+            <span>Export songs</span>
+          </v-tooltip>
+
+          <v-tooltip location="left">
+            <template v-slot:activator="{ props }">
+              <div v-bind="props">
+                <v-btn
+                  class="mt-4"
+                  :disabled="!selectedSongId"
+                  icon
+                  @click="deleteSong"
+                >
+                  <v-icon>mdi-delete</v-icon>
+                </v-btn>
+              </div>
+            </template>
+            <span>Delete current song</span>
+          </v-tooltip>
+
+        </v-menu>
       </v-col>
     </v-row>
     <new-song-dialog
@@ -75,6 +132,14 @@ const openNewSongDialog = () => {
 const deleteSong = async () => {
   if(!selectedSongId.value) return;
   return lyricsDB.delete(selectedSongId.value);
+}
+
+const importSong = () => {
+
+}
+
+const exportSong = () => {
+
 }
 
 </script>
