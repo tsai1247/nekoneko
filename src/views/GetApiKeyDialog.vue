@@ -21,8 +21,9 @@
               <v-btn
                 icon
                 class="mx-2"
+                @click="save"
               >
-                <v-icon @click="save">mdi-content-save</v-icon>
+                <v-icon>mdi-content-save</v-icon>
               </v-btn>
 
             </v-col>
