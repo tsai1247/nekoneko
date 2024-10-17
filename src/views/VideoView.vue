@@ -43,6 +43,17 @@
               v-bind="props"
               size="x-large"
               class="mx-1"
+              @click="stepBack"
+            >mdi-step-backward</v-icon>
+          </template>
+          <span>Back to privious lyrics</span>
+        </v-tooltip>
+        <v-tooltip location="bottom">
+          <template v-slot:activator="{ props }">
+            <v-icon
+              v-bind="props"
+              size="x-large"
+              class="mx-1"
               @click="setRecord"
             >mdi-play</v-icon>
           </template>
@@ -54,12 +65,11 @@
               v-bind="props"
               size="x-large"
               class="mx-1"
-              @click="stepBack"
-            >mdi-step-backward</v-icon>
+              @click="stepForward(5)"
+            >mdi-step-forward</v-icon>
           </template>
-          <span>Back to privious lyrics</span>
+          <span>Fast forward for 5 seconds</span>
         </v-tooltip>
-
         <v-tooltip location="bottom">
           <template v-slot:activator="{ props }">
             <v-icon
@@ -234,6 +244,9 @@ const saveRecord = () => {
   emits('update-recording', !props.isRecording);
 }
 
+const stepForward = () => {
+  seekTo(player.value.getCurrentTime() + 5);
+}
 
 defineExpose({
   seekTo,
