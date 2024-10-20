@@ -151,7 +151,7 @@ const resetRecord = () => {
 }
 
 const setRecord = () => {
-  timelineList.value.push(playerRef.value.currentTime);
+  timelineList.value.push(Math.max(0, playerRef.value.currentTime - 200));
 }
 
 const stepBack = () => {
