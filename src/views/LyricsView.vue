@@ -113,7 +113,7 @@ const props = defineProps({
   isRecording: Boolean,
   timeline: Array,
   lyricSchedule: Array,
-  currentSecond: Number
+  currentTime: Number
 });
 
 const defaultShowKanjiKana = localStorage.getItem('lyrics.showKanjiKana');
@@ -331,7 +331,7 @@ const isRead = (index) => {
 
   if(props.lyricSchedule) {
     if(index+1 < props.lyricSchedule.length) {
-      return props.lyricSchedule[index + 1] <= props.currentSecond;
+      return props.lyricSchedule[index + 1] <= props.currentTime;
     }
   }
 
@@ -349,7 +349,7 @@ const isReading = (index) => {
       const nextLyricSceonds = (index + 1 < props.lyricSchedule.length)
         ? props.lyricSchedule[index + 1] : Number.MAX_SAFE_INTEGER;
 
-      return lyricSeconds <= props.currentSecond && props.currentSecond <= nextLyricSceonds;
+      return lyricSeconds <= props.currentTime && props.currentTime <= nextLyricSceonds;
     }
   }
 
