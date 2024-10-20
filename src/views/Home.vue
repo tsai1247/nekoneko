@@ -69,7 +69,13 @@
   }
 
   const videoId = computed(() => {
-    return youtubeLink.value ? youtubeLink.value.split("v=")[1] : null
+    if(!youtubeLink.value) return null;
+
+    const regex = /^(?:https?:\/\/)?(?:www\.|m\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=|shorts\/|embed\/|v\/)?(?:(?:\w+\/)?)?(?<id>[\w-]{11})(?:[^\s]*)?$/;
+
+    const match = youtubeLink.value.match(regex);
+
+    return match ? match.groups.id : null;
   });
 
   const videoViewRef = ref(null);

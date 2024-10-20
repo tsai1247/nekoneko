@@ -55,8 +55,7 @@
           ></v-textarea>
           <v-text-field
             label="YoutubeLink*"
-            :rules="[youtubeLinkRule
-              || 'https://www.youtube.com/watch?v=xxx' ]"
+            :rules="[youtubeLinkRule]"
             v-model="youtubeLink"
           ></v-text-field>
         </v-card-text>
@@ -101,8 +100,10 @@ watch(() => showDialog.value, () => {
   }
 })
 
-const youtubeLinkRule = (val) =>
-  /^https?:\/\/(?:www\.)?youtube\.com\/watch\?v=[\w-]{11}/.test(val);
+const youtubeLinkRule = (val) => {
+  const testResult =  /^(?:https?:\/\/)?(?:www\.|m\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=|shorts\/|embed\/|v\/)?(?:(?:\w+\/)?)?(?<id>[\w-]{11})(?:[^\s]*)?$/.test(val);
+  return testResult || 'https://www.youtube.com/watch?v=xxxxxxxxxxx';
+}
 
 const requiredRule = (val) => val != '' || 'Required';
 
