@@ -45,7 +45,7 @@
             :rules="[requiredRule]"
           ></v-text-field>
 
-          <div class="text-subtitle-2">* Maximum of 15 full-width characters per line is recommended.</div>
+          <div class="text-subtitle-2">* Maximum of 15 full-width characters per line is recommended on mobile.</div>
           <div class="text-subtitle-2">　　　　　　　　　　　　　about here↓</div>
           <v-textarea
             label="Lyrics*"
