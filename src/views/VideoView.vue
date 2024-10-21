@@ -3,6 +3,7 @@
     ref="videoViewRef"
     :style="{
       height: videoHeight + 'px',
+      bottom: 65 + 'px'
     }"
     :class="`${isRecording ? 'position-fixed ma-2' : ''}`"
   >
