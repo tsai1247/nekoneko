@@ -9,6 +9,7 @@
   >
     <yt-frame
       ref="playerRef"
+      @on-ended="playerRef?.replayVideo"
       class="w-100 h-100"
     ></yt-frame>
     <div class="my-2">
