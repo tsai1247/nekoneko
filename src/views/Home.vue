@@ -1,48 +1,24 @@
 <template>
   <div class="ma-2 mt-4">
-    <v-overlay
-      v-model="showLoad"
-      z-index="9999"
-      persistent
-      class="d-flex align-center justify-center"
-    >
-      <v-progress-circular
-        indeterminate
-        :size="100"
-        :width="10"
-        color="blue-lighten-3"
-      ></v-progress-circular>
-    </v-overlay>
+
     <v-row>
       <v-col cols="12">
-        <search-view
-          ref="searchViewRef"
-          @update-selected-song="onUpdateSelectedSong"
-        ></search-view>
+        <search-view @update-selected-song="onUpdateSelectedSong"></search-view>
       </v-col>
     </v-row>
     <v-row justify="center">
       <v-col
-        cols="11"
-        sm="11"
+        cols="12"
+        sm="12"
         md="5"
         lg="5"
       >
         <video-view
-          :video-id="videoId"
-          @video-ready="showLoad=false"
-          :isRecording="isRecording"
-          @update-recording="updateRecording"
-          @reset-record="resetRecord"
-          @add-timeline="addTimeline"
-          @step-back="stepBack"
-          @save-record="saveRecord"
-          @update-current-second="updateCurrentSecond"
           ref="videoViewRef"
           class="ma-1"
-          :style="{
-            height: videoHeight + 'px',
-          }"
+          :video-id="videoId"
+          :lyricsId="lyricsId"
+          @update-schedule="updateSchedule"
         ></video-view>
       </v-col>
       <v-col
@@ -57,18 +33,10 @@
           :timeline="timelineList"
           :isRecording="isRecording"
           :lyricSchedule="lyricSchedule"
-          :currentSecond="currentSecond"
+          :currentTime="currentTime"
         ></lyrics-view>
       </v-col>
     </v-row>
-
-    <save-recoding-dialog
-      :value="showSaveRecodingDialog"
-      :lyricsId="lyricsId"
-      :timelineList="timelineList"
-      @close-dialog="showSaveRecodingDialog = false"
-      @refresh="timelineListConfirmed"
-    ></save-recoding-dialog>
 
     <get-api-key-dialog
       :value="showGetAPIKeyDialog"
@@ -80,11 +48,9 @@
 </template>
 
 <script setup>
-  import { useElementSize } from '@vueuse/core'
   import lyricsView from './LyricsView.vue';
   import videoView from './VideoView.vue';
   import searchView from './SearchView.vue';
-  import saveRecodingDialog from './SaveRecodingDialog.vue';
   import getApiKeyDialog from './GetApiKeyDialog.vue';
   import { onMounted, ref, computed } from 'vue';
 
@@ -103,64 +69,30 @@
   }
 
   const videoId = computed(() => {
-    return youtubeLink.value ? youtubeLink.value.split("v=")[1] : null
-  });
+    if(!youtubeLink.value) return null;
 
-  const showLoad = ref(true);
+    const regex = /^(?:https?:\/\/)?(?:www\.|m\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=|shorts\/|embed\/|v\/)?(?:(?:\w+\/)?)?(?<id>[\w-]{11})(?:[^\s]*)?$/;
+
+    const match = youtubeLink.value.match(regex);
+
+    return match ? match.groups.id : null;
+  });
 
   const videoViewRef = ref(null);
-  const { width: videoWidth } = useElementSize(videoViewRef);
+  const currentTime = computed(
+    () => videoViewRef.value?.currentTime
+  );
 
-  const videoHeight = computed(() => {
-    const result = videoWidth.value * 9.0 / 16.0;
-    return result;
-  });
+  const isRecording = computed(
+    () => videoViewRef.value?.isRecording
+  );
 
-  const isRecording = ref(false);
-  const timelineList = ref([]);
-  const updateRecording = (val) => {
-    isRecording.value = val;
-    if(isRecording.value) {
-      timelineList.value = [];
-    }
-  }
+  const timelineList = computed(
+    () => videoViewRef.value?.timelineList
+  );
 
-  const resetRecord = () => {
-    isRecording.value = true;
-    timelineList.value = [];
-  }
-
-  const addTimeline = (val) => {
-    timelineList.value.push(val);
-  }
-
-  const stepBack = () => {
-    if(timelineList.value.length > 0) {
-      timelineList.value.pop();
-    }
-
-    if(timelineList.value.length > 0) {
-      videoViewRef.value.seekTo(timelineList.value.at(-1));
-    }
-    else {
-      videoViewRef.value.seekTo(0);
-    }
-  }
-
-  const showSaveRecodingDialog = ref(false);
-  const saveRecord = () => {
-    showSaveRecodingDialog.value = true;
-  }
-
-  const searchViewRef = ref(null);
-  const timelineListConfirmed = async () => {
-    lyricSchedule.value = timelineList.value;
-    videoViewRef.value.replayVideo();
-  }
-
-  const currentSecond = ref(null);
-  const updateCurrentSecond = (val) => {
-    currentSecond.value = val;
+  const updateSchedule = (schedule) => {
+    lyricSchedule.value = schedule;
   }
 
   const showGetAPIKeyDialog = ref(false);

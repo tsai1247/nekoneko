@@ -86,12 +86,8 @@
                         || lyric.type === kanaType.OTHERS && showOtherKana"
                 :isFirst="jndex === 0"
                 :space-emphasize="spaceEmphasize"
-                :isRead="isRecording
-                ? index < timeline.length - 1
-                : lyricSchedule && index < lyricSchedule.length && Math.floor(lyricSchedule[index]) < Math.floor(currentSecond)"
-                :isReading="isRecording
-                ? index === timeline.length - 1
-                :lyricSchedule && index < lyricSchedule.length && Math.floor(lyricSchedule[index]) === Math.floor(currentSecond)"
+                :isRead="isRead(index)"
+                :isReading="isReading(index)"
               ></core-ruby>
             </span>
           </span>
@@ -100,7 +96,7 @@
     </v-row>
     <v-row
       v-if="isRecording"
-      :style="{height: '200px'}"
+      :style="{height: '230px'}"
     ></v-row>
   </div>
 </template>
@@ -117,7 +113,7 @@ const props = defineProps({
   isRecording: Boolean,
   timeline: Array,
   lyricSchedule: Array,
-  currentSecond: Number
+  currentTime: Number
 });
 
 const defaultShowKanjiKana = localStorage.getItem('lyrics.showKanjiKana');
@@ -327,6 +323,38 @@ const formatTime = (seconds) => {
 const readingIndex = computed(() => {
   return null;
 });
+
+const isRead = (index) => {
+  if(props.isRecording) {
+    return index < props.timeline.length - 1;
+  }
+
+  if(props.lyricSchedule) {
+    if(index+1 < props.lyricSchedule.length) {
+      return props.lyricSchedule[index + 1] <= props.currentTime;
+    }
+  }
+
+  return false;
+}
+
+const isReading = (index) => {
+  if(props.isRecording) {
+    return index === props.timeline.length - 1;
+  }
+
+  if(props.lyricSchedule) {
+    if(index < props.lyricSchedule.length) {
+      const lyricSeconds = props.lyricSchedule[index];
+      const nextLyricSceonds = (index + 1 < props.lyricSchedule.length)
+        ? props.lyricSchedule[index + 1] : Number.MAX_SAFE_INTEGER;
+
+      return lyricSeconds <= props.currentTime && props.currentTime <= nextLyricSceonds;
+    }
+  }
+
+  return false;
+}
 
 </script>
 

@@ -45,17 +45,17 @@
             :rules="[requiredRule]"
           ></v-text-field>
 
-          <div class="text-subtitle-2">* Maximum of 15 full-width characters per line is recommended.</div>
+          <div class="text-subtitle-2">* Maximum of 15 full-width characters per line is recommended on mobile.</div>
           <div class="text-subtitle-2">　　　　　　　　　　　　　about here↓</div>
           <v-textarea
             label="Lyrics*"
             v-model="lyrics"
             :rules="[requiredRule]"
+            auto-grow
           ></v-textarea>
           <v-text-field
             label="YoutubeLink*"
-            :rules="[youtubeLinkRule
-              || 'https://www.youtube.com/watch?v=xxx' ]"
+            :rules="[youtubeLinkRule]"
             v-model="youtubeLink"
           ></v-text-field>
         </v-card-text>
@@ -100,8 +100,10 @@ watch(() => showDialog.value, () => {
   }
 })
 
-const youtubeLinkRule = (val) =>
-  /^https?:\/\/(?:www\.)?youtube\.com\/watch\?v=[\w-]{11}/.test(val);
+const youtubeLinkRule = (val) => {
+  const testResult =  /^(?:https?:\/\/)?(?:www\.|m\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=|shorts\/|embed\/|v\/)?(?:(?:\w+\/)?)?(?<id>[\w-]{11})(?:[^\s]*)?$/.test(val);
+  return testResult || 'https://www.youtube.com/watch?v=xxxxxxxxxxx';
+}
 
 const requiredRule = (val) => val != '' || 'Required';
 
