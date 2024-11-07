@@ -141,7 +141,7 @@ watch(() => [
 })
 
 const displayingLyricList = ref([]);
-const JPSYMBOLLIST = ['「', '」', '、'];
+const JPSYMBOLLIST = ['「', '」', '、', '?', '!'];
 function parseToken(tokenLine, hiraganaLine)
 {
   hiraganaLine = hiraganaLine.split(' ').reverse();
@@ -161,7 +161,7 @@ function parseToken(tokenLine, hiraganaLine)
       if(JPSYMBOLLIST.indexOf(token) !== -1){
         kanaList.push({
           type: kanaType.OTHERS,
-          value: token
+          value: ''
         });
         let first = hiraganaLine.pop();
         first = first.substring(1);
@@ -311,6 +311,9 @@ watch(() => props.lyrics, () => {
         if(last.trim() === '' || cur.trim() === '') {
           sum.push(last);
           sum.push(cur);
+        }
+        else if(/[0-9]+/.test(last)) {
+          sum.push(`${last}${cur}`)
         }
         else if(!wanakana.isJapanese(last) && !wanakana.isJapanese(cur) && (/^[^a-zA-Z ]$/.test(cur) || /^[^a-zA-Z ]$/.test(last[last.length - 1]))) {
           sum.push(`${last}${cur}`)
