@@ -44,7 +44,7 @@
 
     <v-spacer></v-spacer>
 
-    <v-chip>v0.10.1</v-chip>
+    <v-chip>{{ version }}</v-chip>
     <v-tooltip location="bottom">
       <template v-slot:activator="{ props }">
         <div v-bind="props">
@@ -64,7 +64,9 @@
 </template>
 
 <script setup>
-  import { ref } from 'vue';
+  import { onMounted, ref } from 'vue';
+  import packageJson from '@/../package.json';
+
   const keyword = ref('');
   function search() {
     if(keyword.value) {
@@ -79,5 +81,14 @@
   function gotoSubscription() {
     window.open('https://www.youtube.com/feed/subscriptions', '_blank');
   }
+
+  const version = ref('');
+
+  onMounted(() => {
+    version.value = packageJson.version ?? '';
+    if(version.value.length == 0 || version.value[0] != 'v') {
+      version.value = `v${version.value}`;
+    }
+  })
 
 </script>

@@ -109,6 +109,19 @@ const requiredRule = (val) => val != '' || 'Required';
 
 const save = async () => {
   emits('close-dialog');
+
+  // deal with '゙'
+  let dotIndex = lyrics.value.indexOf('゙');
+  while(dotIndex !== -1) {
+    let lastChar = `${lyrics.value[dotIndex - 1]}`;
+    lyrics.value = lyrics.value.replaceAll(
+      `${lastChar}゙`,
+      String.fromCharCode(lastChar.charCodeAt(0) + 1)
+    )
+
+    dotIndex = lyrics.value.indexOf('゙');
+  }
+
   const formattedLyrics = lyrics.value.replaceAll('。', '').replaceAll('\r\n', '。').replaceAll('\n', '。')
   let hiragana = (await toHiragana(formattedLyrics))?.converted;
   hiragana = hiragana?.replaceAll('。', '\n').split('\n').map((item => item.trim()));

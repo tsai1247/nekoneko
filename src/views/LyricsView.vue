@@ -141,8 +141,8 @@ watch(() => [
 })
 
 const displayingLyricList = ref([]);
-
-function something2(tokenLine, hiraganaLine)
+const JPSYMBOLLIST = ['「', '」', '、', '?', '!', '"'];
+function parseToken(tokenLine, hiraganaLine)
 {
   hiraganaLine = hiraganaLine.split(' ').reverse();
 
@@ -158,9 +158,25 @@ function something2(tokenLine, hiraganaLine)
         token = wanakana.toHiragana(token);
         currentType = kanaType.KATAKANA;
       }
-      if(wanakana.isHiragana(token)) {
+      if(JPSYMBOLLIST.indexOf(token) !== -1){
+        kanaList.push({
+          type: kanaType.OTHERS,
+          value: ''
+        });
+        let first = hiraganaLine.pop();
+        first = first.substring(1);
+        if(first.length !== 0) {
+          hiraganaLine.push(first);
+        }
+      }
+      else if(wanakana.isHiragana(token)) {
         if(kanaList.length !== 0) {
           let target = kanaList.pop();
+          let spaceBlock = false;
+          if(target === null && kanaList.length !== 0) {
+            target = kanaList.pop();
+            spaceBlock += true;
+          }
           if(target === null) {
             kanaList.push(target);
             let rest = token.length;
@@ -180,9 +196,9 @@ function something2(tokenLine, hiraganaLine)
             });
           }
           else {
-            const index = target.value.indexOf(token);
+            const index = target.value.indexOf(token, 1);
             if(index === -1) {
-              const index = target.value.indexOf(token[0]);
+              const index = target.value.indexOf(token[0], 1);
               if(index === -1) {
                 kanaList.push({
                   type: target.type,
@@ -237,6 +253,9 @@ function something2(tokenLine, hiraganaLine)
               });
               hiraganaLine.push(target.value.substring(index + token.length));
             }
+          }
+          if(spaceBlock) {
+            kanaList.push(null);
           }
         }
         else {
@@ -293,6 +312,9 @@ watch(() => props.lyrics, () => {
           sum.push(last);
           sum.push(cur);
         }
+        else if(/[0-9]+/.test(last)) {
+          sum.push(`${last}${cur}`)
+        }
         else if(!wanakana.isJapanese(last) && !wanakana.isJapanese(cur) && (/^[^a-zA-Z ]$/.test(cur) || /^[^a-zA-Z ]$/.test(last[last.length - 1]))) {
           sum.push(`${last}${cur}`)
         }
@@ -306,10 +328,9 @@ watch(() => props.lyrics, () => {
       }, [])
     );
     displayingLyricList.value = tokenizedText.map((tokenLine, index) => {
-      const hiraganaLine = props.hiragana[index];
-      return something2(tokenLine, hiraganaLine);
+      const hiraganaLine = props.hiragana[index].replace(' ', '');
+      return parseToken(tokenLine, hiraganaLine);
     });
-
   }
 
 })
