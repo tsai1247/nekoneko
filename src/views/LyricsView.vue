@@ -141,7 +141,7 @@ watch(() => [
 })
 
 const displayingLyricList = ref([]);
-const JPSYMBOLLIST = ['「', '」', '、', '?', '!', '"'];
+const JPSYMBOLLIST = ['「', '」', '、', '?', '!', '"', '？', '（', '）', '(', ')'];
 function parseToken(tokenLine, hiraganaLine)
 {
   hiraganaLine = hiraganaLine.split(' ').reverse();
@@ -159,15 +159,35 @@ function parseToken(tokenLine, hiraganaLine)
         currentType = kanaType.KATAKANA;
       }
       if(JPSYMBOLLIST.indexOf(token) !== -1){
+        if(kanaList.length > 0) {
+          const last = kanaList.pop();
+          if(last != null && last.value.slice(-1) === token) {
+            kanaList.push({
+              type: last.type,
+              value: last.value.substring(0, last.value.length-1)
+            })
+          }
+          else {
+            kanaList.push(last);
+            let first = hiraganaLine.pop();
+            first = first.substring(1);
+            if(first.length !== 0) {
+              hiraganaLine.push(first);
+            }
+          }
+        }
+        else {
+          let first = hiraganaLine.pop();
+          first = first.substring(1);
+          if(first.length !== 0) {
+            hiraganaLine.push(first);
+          }
+        }
+
         kanaList.push({
           type: kanaType.OTHERS,
           value: ''
         });
-        let first = hiraganaLine.pop();
-        first = first.substring(1);
-        if(first.length !== 0) {
-          hiraganaLine.push(first);
-        }
       }
       else if(wanakana.isHiragana(token)) {
         if(kanaList.length !== 0) {
