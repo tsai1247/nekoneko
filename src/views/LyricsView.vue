@@ -66,12 +66,23 @@
             <br />
           </span>
           <span
-            v-else-if="isRecording"
+            v-if="isRecording"
             class="mr-2"
           >
             <v-chip>
               {{ index < timeline.length ? formatTime(timeline[index]) : '00:00' }}
             </v-chip>
+          </span>
+          <span v-else>
+            <v-btn
+              elevation="2"
+              variant="tonal"
+              icon="mdi-play"
+              size="x-small"
+              class="mr-2"
+              @click="goTo(index)"
+            >
+            </v-btn>
           </span>
           <span
             v-for="(lyric, jndex) in line"
@@ -115,6 +126,10 @@ const props = defineProps({
   lyricSchedule: Array,
   currentTime: Number
 });
+
+const emits = defineEmits([
+  'seek-to',
+])
 
 const defaultShowKanjiKana = localStorage.getItem('lyrics.showKanjiKana');
 const showKanjiKana = ref(defaultShowKanjiKana === null || defaultShowKanjiKana === 'true');
@@ -377,6 +392,17 @@ const isRead = (index) => {
   }
 
   return false;
+}
+
+const goTo = (index) => {
+  if(props.lyricSchedule) {
+    if(index < props.lyricSchedule.length) {
+      emits('seek-to', props.lyricSchedule[index]);
+    }
+    else {
+      emits('seek-to', props.lyricSchedule.at(-1));
+    }
+  }
 }
 
 const isReading = (index) => {

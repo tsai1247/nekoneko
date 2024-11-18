@@ -34,6 +34,7 @@
           :isRecording="isRecording"
           :lyricSchedule="lyricSchedule"
           :currentTime="currentTime"
+          @seek-to="seekTo"
         ></lyrics-view>
       </v-col>
     </v-row>
@@ -90,6 +91,10 @@
   const timelineList = computed(
     () => videoViewRef.value?.timelineList
   );
+
+  const seekTo = (second) => {
+    return videoViewRef.value?.seekTo(second);
+  }
 
   const updateSchedule = (schedule) => {
     lyricSchedule.value = schedule;
