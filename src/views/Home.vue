@@ -18,6 +18,7 @@
           class="ma-1"
           :video-id="videoId"
           :lyricsId="lyricsId"
+          :lyricSchedule="lyricSchedule"
           @update-schedule="updateSchedule"
         ></video-view>
       </v-col>
@@ -34,6 +35,7 @@
           :isRecording="isRecording"
           :lyricSchedule="lyricSchedule"
           :currentTime="currentTime"
+          @seek-to="seekTo"
         ></lyrics-view>
       </v-col>
     </v-row>
@@ -90,6 +92,10 @@
   const timelineList = computed(
     () => videoViewRef.value?.timelineList
   );
+
+  const seekTo = (second) => {
+    return videoViewRef.value?.seekTo(second);
+  }
 
   const updateSchedule = (schedule) => {
     lyricSchedule.value = schedule;

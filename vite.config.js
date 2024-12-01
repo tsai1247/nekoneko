@@ -6,6 +6,7 @@ import ViteFonts from 'unplugin-fonts/vite'
 // Utilities
 import { defineConfig } from 'vite'
 import { fileURLToPath, URL } from 'node:url'
+import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -28,6 +29,7 @@ export default defineConfig({
         }],
       },
     }),
+    VitePWA({ registerType: 'autoUpdate' }),
   ],
   define: { 'process.env': {} },
   resolve: {

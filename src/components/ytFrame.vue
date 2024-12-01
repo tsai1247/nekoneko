@@ -122,6 +122,15 @@ const playVideo = () => {
   }
 };
 
+const isPlaying = () => {
+  if(player.value) {
+    if (typeof player.value.getPlayerState === "function") {
+      return player.value.getPlayerState() === 1;
+    }
+  }
+  return false;
+}
+
 /**
  * Pause video.
  */
@@ -212,6 +221,9 @@ defineExpose({
 
   // 所有秒數
   duration,
+
+  // 是否正在撥放
+  isPlaying,
 });
 </script>
 

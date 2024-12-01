@@ -27,6 +27,7 @@
     "unplugin-fonts": "^1.0.3",
     "vite": "^4.2.0",
     "vite-plugin-node-polyfills": "^0.22.0",
+    "vite-plugin-pwa": "^0.21.0",
     "vite-plugin-vuetify": "^1.0.0"
   }
 }

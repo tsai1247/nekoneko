@@ -55,43 +55,54 @@
       </v-col>
       <v-col
         cols="12"
+        height="100%"
         class="pa-0 mr-2"
       >
-        <div
-          class="playing-lyrics"
-          v-for="(line, index) in displayingLyricList"
-          :key="index"
+        <v-virtual-scroll
+          height="380px"
+          :items="['1']"
         >
-          <span v-if="line.length === 0">
-            <br />
-          </span>
-          <span
-            v-else-if="isRecording"
-            class="mr-2"
-          >
-            <v-chip>
-              {{ index < timeline.length ? formatTime(timeline[index]) : '00:00' }}
-            </v-chip>
-          </span>
-          <span
-            v-for="(lyric, jndex) in line"
-            :key="jndex"
-          >
-            <span>
-              <core-ruby
-                :value="lyric.kanji"
-                :rt="lyric.hiragana"
-                :showRt="lyric.type === kanaType.KANJI && showKanjiKana
+          <template v-slot:default="{}">
+            <div
+              class="playing-lyrics"
+              v-for="(line, index) in displayingLyricList"
+              :key="index"
+            >
+              <span v-if="line.length === 0">
+                <br />
+              </span>
+              <span
+                v-if="isRecording"
+                class="mr-2"
+              >
+                <v-chip>
+                  {{ index < timeline.length ? formatTime(timeline[index]) : '00:00' }}
+                </v-chip>
+              </span>
+              <span
+                v-for="(lyric, jndex) in line"
+                :key="jndex"
+                @click="goTo(index)"
+                :class="index < lyricSchedule?.length ? 'clickable' : ''"
+              >
+
+                <span>
+                  <core-ruby
+                    :value="lyric.kanji"
+                    :rt="lyric.hiragana"
+                    :showRt="lyric.type === kanaType.KANJI && showKanjiKana
                         || lyric.type === kanaType.KATAKANA && showKatakanaKana
                         || lyric.type === kanaType.OTHERS && showOtherKana"
-                :isFirst="jndex === 0"
-                :space-emphasize="spaceEmphasize"
-                :isRead="isRead(index)"
-                :isReading="isReading(index)"
-              ></core-ruby>
-            </span>
-          </span>
-        </div>
+                    :isFirst="jndex === 0"
+                    :space-emphasize="spaceEmphasize"
+                    :isRead="isRead(index)"
+                    :isReading="isReading(index)"
+                  ></core-ruby>
+                </span>
+              </span>
+            </div>
+          </template>
+        </v-virtual-scroll>
       </v-col>
     </v-row>
     <v-row
@@ -115,6 +126,10 @@ const props = defineProps({
   lyricSchedule: Array,
   currentTime: Number
 });
+
+const emits = defineEmits([
+  'seek-to',
+])
 
 const defaultShowKanjiKana = localStorage.getItem('lyrics.showKanjiKana');
 const showKanjiKana = ref(defaultShowKanjiKana === null || defaultShowKanjiKana === 'true');
@@ -141,7 +156,7 @@ watch(() => [
 })
 
 const displayingLyricList = ref([]);
-const JPSYMBOLLIST = ['「', '」', '、', '?', '!', '"', '？', '（', '）', '(', ')'];
+const JPSYMBOLLIST = ['「', '」', '、', '?', '!', '"', '？', '（', '）', '(', ')', '“', '”'];
 function parseToken(tokenLine, hiraganaLine)
 {
   hiraganaLine = hiraganaLine.split(' ').reverse();
@@ -379,6 +394,14 @@ const isRead = (index) => {
   return false;
 }
 
+const goTo = (index) => {
+  if(props.lyricSchedule) {
+    if(index < props.lyricSchedule.length) {
+      emits('seek-to', props.lyricSchedule[index]);
+    }
+  }
+}
+
 const isReading = (index) => {
   if(props.isRecording) {
     return index === props.timeline.length - 1;
@@ -405,5 +428,10 @@ const isReading = (index) => {
     line-height: 60px;
     margin-left: 15px;
     white-space: pre-line;
+  }
+
+  .clickable {
+    cursor: pointer;
+    user-select: none;
   }
 </style>
