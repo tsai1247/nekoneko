@@ -73,21 +73,13 @@
               {{ index < timeline.length ? formatTime(timeline[index]) : '00:00' }}
             </v-chip>
           </span>
-          <span v-else>
-            <v-btn
-              elevation="2"
-              variant="tonal"
-              icon="mdi-play"
-              size="x-small"
-              class="mr-2"
-              @click="goTo(index)"
-            >
-            </v-btn>
-          </span>
           <span
             v-for="(lyric, jndex) in line"
             :key="jndex"
+            @click="goTo(index)"
+            class="clickable"
           >
+
             <span>
               <core-ruby
                 :value="lyric.kanji"
@@ -431,5 +423,10 @@ const isReading = (index) => {
     line-height: 60px;
     margin-left: 15px;
     white-space: pre-line;
+  }
+
+  .clickable {
+    cursor: pointer;
+    user-select: none;
   }
 </style>
