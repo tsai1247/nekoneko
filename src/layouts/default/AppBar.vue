@@ -11,7 +11,6 @@
       variant="underlined"
       class="mt-4"
       @keyup.enter="search"
-      prepend-inner-icon="mdi-magnify"
     ></v-text-field>
 
     <v-tooltip location="bottom">
