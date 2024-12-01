@@ -18,6 +18,7 @@
           class="ma-1"
           :video-id="videoId"
           :lyricsId="lyricsId"
+          :lyricSchedule="lyricSchedule"
           @update-schedule="updateSchedule"
         ></video-view>
       </v-col>

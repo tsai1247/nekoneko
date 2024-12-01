@@ -90,6 +90,65 @@
           <span>Save record</span>
         </v-tooltip>
       </span>
+      <span
+        v-else
+        class="mx-2"
+      >
+        <v-tooltip location="bottom">
+          <template v-slot:activator="{ props }">
+            <v-icon
+              v-bind="props"
+              size="x-large"
+              class="mx-1"
+              @click="seekTo(lyricSchedule?.at(0))"
+            >mdi-numeric-1-circle-outline</v-icon>
+          </template>
+          <span>Start from first line</span>
+        </v-tooltip>
+        <v-tooltip location="bottom">
+          <template v-slot:activator="{ props }">
+            <v-icon
+              v-bind="props"
+              size="x-large"
+              class="mx-1"
+              @click="rewind"
+            >mdi-step-backward</v-icon>
+          </template>
+          <span>Rewind for 5 seconds</span>
+        </v-tooltip>
+        <v-tooltip location="bottom">
+          <template v-slot:activator="{ props }">
+            <v-icon
+              v-if="isPlaying()"
+              v-bind="props"
+              size="x-large"
+              class="mx-1"
+              @click="switchVideo"
+            >mdi-pause-circle-outline</v-icon>
+            <v-icon
+              v-else
+              v-bind="props"
+              size="x-large"
+              class="mx-1"
+              @click="switchVideo"
+            >mdi-play-circle-outline</v-icon>
+          </template>
+          <span v-if="isPlaying()">Pause</span>
+          <span v-else>Play</span>
+        </v-tooltip>
+        <v-tooltip location="bottom">
+          <template v-slot:activator="{ props }">
+            <v-icon
+              v-bind="props"
+              size="x-large"
+              class="mx-1"
+              @click="fastForward"
+            >mdi-step-forward</v-icon>
+          </template>
+          <span>Fast forward for 5 seconds</span>
+        </v-tooltip>
+      </span>
+
     </div>
 
     <save-recoding-dialog
@@ -115,6 +174,10 @@ const props = defineProps({
   },
   lyricsId: {
     type: Number,
+    default: null
+  },
+  lyricSchedule: {
+    type: Array,
     default: null
   }
 })
@@ -187,8 +250,39 @@ const stepForward = () => {
   playerRef.value.fastForward();
 }
 
+const fastForward = () => {
+  playerRef.value.fastForward();
+}
+
+const rewind = () => {
+  playerRef.value.rewind();
+}
+
 const seekTo = (seconds) => {
-  return playerRef.value?.seekTo(seconds);
+  if(seconds) {
+    return playerRef.value?.seekTo(seconds);
+  }
+}
+
+const isPlaying = () => {
+  return playerRef.value?.isPlaying();
+}
+
+const pauseVideo = () => {
+  return playerRef.value?.pauseVideo();
+}
+
+const playVideo = () => {
+  return playerRef.value?.playVideo();
+}
+
+const switchVideo = () => {
+  if(isPlaying()) {
+    pauseVideo();
+  }
+  else {
+    playVideo();
+  }
 }
 
 const currentTime = computed(
