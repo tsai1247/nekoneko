@@ -156,7 +156,7 @@ watch(() => [
 })
 
 const displayingLyricList = ref([]);
-const JPSYMBOLLIST = ['「', '」', '、', '?', '!', '"', '？', '（', '）', '(', ')'];
+const JPSYMBOLLIST = ['「', '」', '、', '?', '!', '"', '？', '（', '）', '(', ')', '“', '”'];
 function parseToken(tokenLine, hiraganaLine)
 {
   hiraganaLine = hiraganaLine.split(' ').reverse();
