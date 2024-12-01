@@ -77,7 +77,7 @@
             v-for="(lyric, jndex) in line"
             :key="jndex"
             @click="goTo(index)"
-            class="clickable"
+            :class="index < lyricSchedule?.length ? 'clickable' : ''"
           >
 
             <span>
@@ -390,9 +390,6 @@ const goTo = (index) => {
   if(props.lyricSchedule) {
     if(index < props.lyricSchedule.length) {
       emits('seek-to', props.lyricSchedule[index]);
-    }
-    else {
-      emits('seek-to', props.lyricSchedule.at(-1));
     }
   }
 }
