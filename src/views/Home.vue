@@ -27,6 +27,7 @@
         sm="12"
         md="7"
         lg="7"
+        :style="{height: '450px'}"
       >
         <lyrics-view
           :lyrics="lyrics"

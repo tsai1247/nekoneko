@@ -1,110 +1,94 @@
 <template>
-  <div class="ma-1">
-    <v-row>
+  <div :style="{height: '100%'}">
+    <v-row no-gutters>
       <v-col
-        cols="12"
-        class="my-0"
+        cols="4"
+        md="3"
       >
-        <v-row
-          class="mr-2"
-          justify="end"
-        >
-          <v-col
-            cols="auto"
-            class="pa-0 mr-2"
-          >
-            <v-checkbox
-              v-model="showKanjiKana"
-              label="Kanji"
-              hide-details
-            ></v-checkbox>
-          </v-col>
-          <v-col
-            cols="auto"
-            class="pa-0 mr-2"
-          >
-            <v-checkbox
-              v-model="showKatakanaKana"
-              label="Katakana"
-              hide-details
-            ></v-checkbox>
-          </v-col>
-          <v-col
-            cols="auto"
-            class="pa-0 mr-2"
-          >
-            <v-checkbox
-              v-model="showOtherKana"
-              label="Others"
-              hide-details
-            ></v-checkbox>
-          </v-col>
-
-          <v-col
-            cols="auto"
-            class="pa-0 mr-2"
-          >
-            <v-checkbox
-              v-model="spaceEmphasize"
-              label="Space Emphasize"
-              hide-details
-            ></v-checkbox>
-          </v-col>
-
-        </v-row>
+        <v-checkbox
+          v-model="showKanjiKana"
+          label="Kanji"
+          hide-details
+        ></v-checkbox>
       </v-col>
       <v-col
-        cols="12"
-        height="100%"
-        class="pa-0 mr-2"
+        cols="4"
+        md="3"
       >
-        <v-virtual-scroll
-          height="380px"
-          :items="['1']"
-        >
-          <template v-slot:default="{}">
-            <div
-              class="playing-lyrics"
-              v-for="(line, index) in displayingLyricList"
-              :key="index"
-            >
-              <span v-if="line.length === 0">
-                <br />
-              </span>
-              <span
-                v-if="isRecording"
-                class="mr-2"
-              >
-                <v-chip>
-                  {{ index < timeline.length ? formatTime(timeline[index]) : '00:00' }}
-                </v-chip>
-              </span>
-              <span
-                v-for="(lyric, jndex) in line"
-                :key="jndex"
-                @click="goTo(index)"
-                :class="index < lyricSchedule?.length ? 'clickable' : ''"
-              >
-
-                <span>
-                  <core-ruby
-                    :value="lyric.kanji"
-                    :rt="lyric.hiragana"
-                    :showRt="lyric.type === kanaType.KANJI && showKanjiKana
-                        || lyric.type === kanaType.KATAKANA && showKatakanaKana
-                        || lyric.type === kanaType.OTHERS && showOtherKana"
-                    :isFirst="jndex === 0"
-                    :space-emphasize="spaceEmphasize"
-                    :isRead="isRead(index)"
-                    :isReading="isReading(index)"
-                  ></core-ruby>
-                </span>
-              </span>
-            </div>
-          </template>
-        </v-virtual-scroll>
+        <v-checkbox
+          v-model="showKatakanaKana"
+          label="Katakana"
+          hide-details
+        ></v-checkbox>
+      </v-col>
+      <v-col
+        cols="4"
+        md="3"
+      >
+        <v-checkbox
+          v-model="showOtherKana"
+          label="Others"
+          hide-details
+        ></v-checkbox>
+      </v-col>
+      <v-col
+        cols="4"
+        md="3"
+      >
+        <v-checkbox
+          v-model="spaceEmphasize"
+          label="Space Emphasize"
+          hide-details
+        ></v-checkbox>
       </v-col>
     </v-row>
+
+    <div :style="{height: '100%'}">
+      <v-virtual-scroll
+        :style="{height: '100%'}"
+        :items="['1']"
+      >
+        <template v-slot:default="{}">
+          <div
+            class="playing-lyrics"
+            v-for="(line, index) in displayingLyricList"
+            :key="index"
+          >
+            <span v-if="line.length === 0">
+              <br />
+            </span>
+            <span
+              v-if="isRecording"
+              class="mr-2"
+            >
+              <v-chip>
+                {{ index < timeline.length ? formatTime(timeline[index]) : '00:00' }}
+              </v-chip>
+            </span>
+            <span
+              v-for="(lyric, jndex) in line"
+              :key="jndex"
+              @click="goTo(index)"
+              :class="index < lyricSchedule?.length ? 'clickable' : ''"
+            >
+              <span>
+                <core-ruby
+                  :value="lyric.kanji"
+                  :rt="lyric.hiragana"
+                  :showRt="lyric.type === kanaType.KANJI && showKanjiKana
+                      || lyric.type === kanaType.KATAKANA && showKatakanaKana
+                      || lyric.type === kanaType.OTHERS && showOtherKana"
+                  :isFirst="jndex === 0"
+                  :space-emphasize="spaceEmphasize"
+                  :isRead="isRead(index)"
+                  :isReading="isReading(index)"
+                ></core-ruby>
+              </span>
+            </span>
+          </div>
+        </template>
+      </v-virtual-scroll>
+    </div>
   </div>
 </template>
 
