@@ -22,6 +22,7 @@
                 icon
                 class="mx-2"
                 @click="save"
+                :disabled="!(apiKeyInput?.length > 0)"
               >
                 <v-icon>mdi-content-save</v-icon>
               </v-btn>
@@ -98,8 +99,10 @@ const showDialog = computed({
 const apiKeyInput = ref(null);
 
 const save = async () => {
-  localStorage.setItem('hiragana_api_key', apiKeyInput.value);
-  emits('close-dialog');
+  if(apiKeyInput.value.length > 1) {
+    localStorage.setItem('hiragana_api_key', apiKeyInput.value);
+    emits('close-dialog');
+  }
 };
 
 const close = () => {
