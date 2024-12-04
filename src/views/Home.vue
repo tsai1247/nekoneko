@@ -27,6 +27,7 @@
         sm="12"
         md="7"
         lg="7"
+        :style="{height: '450px'}"
       >
         <lyrics-view
           :lyrics="lyrics"
@@ -103,7 +104,8 @@
 
   const showGetAPIKeyDialog = ref(false);
   onMounted(() => {
-    if (localStorage.getItem("hiragana_api_key") === null) {
+    const api_key = localStorage.getItem("hiragana_api_key");
+    if ( api_key === null || api_key === '' || api_key === "null" ) {
       showGetAPIKeyDialog.value = true;
     }
   })

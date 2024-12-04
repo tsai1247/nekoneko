@@ -1,114 +1,94 @@
 <template>
-  <div class="ma-1">
-    <v-row>
+  <div :style="{height: '100%'}">
+    <v-row no-gutters>
       <v-col
-        cols="12"
-        class="my-0"
+        cols="4"
+        md="3"
       >
-        <v-row
-          class="mr-2"
-          justify="end"
-        >
-          <v-col
-            cols="auto"
-            class="pa-0 mr-2"
-          >
-            <v-checkbox
-              v-model="showKanjiKana"
-              label="Kanji"
-              hide-details
-            ></v-checkbox>
-          </v-col>
-          <v-col
-            cols="auto"
-            class="pa-0 mr-2"
-          >
-            <v-checkbox
-              v-model="showKatakanaKana"
-              label="Katakana"
-              hide-details
-            ></v-checkbox>
-          </v-col>
-          <v-col
-            cols="auto"
-            class="pa-0 mr-2"
-          >
-            <v-checkbox
-              v-model="showOtherKana"
-              label="Others"
-              hide-details
-            ></v-checkbox>
-          </v-col>
-
-          <v-col
-            cols="auto"
-            class="pa-0 mr-2"
-          >
-            <v-checkbox
-              v-model="spaceEmphasize"
-              label="Space Emphasize"
-              hide-details
-            ></v-checkbox>
-          </v-col>
-
-        </v-row>
+        <v-checkbox
+          v-model="showKanjiKana"
+          label="Kanji"
+          hide-details
+        ></v-checkbox>
       </v-col>
       <v-col
-        cols="12"
-        height="100%"
-        class="pa-0 mr-2"
+        cols="4"
+        md="3"
       >
-        <v-virtual-scroll
-          height="380px"
-          :items="['1']"
-        >
-          <template v-slot:default="{}">
-            <div
-              class="playing-lyrics"
-              v-for="(line, index) in displayingLyricList"
-              :key="index"
-            >
-              <span v-if="line.length === 0">
-                <br />
-              </span>
-              <span
-                v-if="isRecording"
-                class="mr-2"
-              >
-                <v-chip>
-                  {{ index < timeline.length ? formatTime(timeline[index]) : '00:00' }}
-                </v-chip>
-              </span>
-              <span
-                v-for="(lyric, jndex) in line"
-                :key="jndex"
-                @click="goTo(index)"
-                :class="index < lyricSchedule?.length ? 'clickable' : ''"
-              >
-
-                <span>
-                  <core-ruby
-                    :value="lyric.kanji"
-                    :rt="lyric.hiragana"
-                    :showRt="lyric.type === kanaType.KANJI && showKanjiKana
-                        || lyric.type === kanaType.KATAKANA && showKatakanaKana
-                        || lyric.type === kanaType.OTHERS && showOtherKana"
-                    :isFirst="jndex === 0"
-                    :space-emphasize="spaceEmphasize"
-                    :isRead="isRead(index)"
-                    :isReading="isReading(index)"
-                  ></core-ruby>
-                </span>
-              </span>
-            </div>
-          </template>
-        </v-virtual-scroll>
+        <v-checkbox
+          v-model="showKatakanaKana"
+          label="Katakana"
+          hide-details
+        ></v-checkbox>
+      </v-col>
+      <v-col
+        cols="4"
+        md="3"
+      >
+        <v-checkbox
+          v-model="showOtherKana"
+          label="Others"
+          hide-details
+        ></v-checkbox>
+      </v-col>
+      <v-col
+        cols="4"
+        md="3"
+      >
+        <v-checkbox
+          v-model="spaceEmphasize"
+          label="Space Emphasize"
+          hide-details
+        ></v-checkbox>
       </v-col>
     </v-row>
-    <v-row
-      v-if="isRecording"
-      :style="{height: '230px'}"
-    ></v-row>
+
+    <div :style="{height: '100%'}">
+      <v-virtual-scroll
+        :style="{height: '100%'}"
+        :items="['1']"
+      >
+        <template v-slot:default="{}">
+          <div
+            class="playing-lyrics"
+            v-for="(line, index) in displayingLyricList"
+            :key="index"
+          >
+            <span v-if="line.length === 0">
+              <br />
+            </span>
+            <span
+              v-if="isRecording"
+              class="mr-2"
+            >
+              <v-chip>
+                {{ index < timeline.length ? formatTime(timeline[index]) : '00:00' }}
+              </v-chip>
+            </span>
+            <span
+              v-for="(lyric, jndex) in line"
+              :key="jndex"
+              @click="goTo(index)"
+              :class="index < lyricSchedule?.length ? 'clickable' : ''"
+            >
+              <span>
+                <core-ruby
+                  :value="lyric.kanji"
+                  :rt="lyric.hiragana"
+                  :showRt="lyric.type === kanaType.KANJI && showKanjiKana
+                      || lyric.type === kanaType.KATAKANA && showKatakanaKana
+                      || lyric.type === kanaType.OTHERS && showOtherKana"
+                  :isFirst="jndex === 0"
+                  :space-emphasize="spaceEmphasize"
+                  :isRead="isRead(index)"
+                  :isReading="isReading(index)"
+                ></core-ruby>
+              </span>
+            </span>
+          </div>
+        </template>
+      </v-virtual-scroll>
+    </div>
   </div>
 </template>
 
@@ -159,61 +139,142 @@ const displayingLyricList = ref([]);
 const JPSYMBOLLIST = ['「', '」', '、', '?', '!', '"', '？', '（', '）', '(', ')', '“', '”'];
 function parseToken(tokenLine, hiraganaLine)
 {
-  hiraganaLine = hiraganaLine.split(' ').reverse();
+  try {
+    hiraganaLine = hiraganaLine.split(' ').reverse();
 
-  const kanaList = [];
-  tokenLine.forEach((token) => {
-    token = token.trim();
-    if(token === '') {
-      kanaList.push(null);
-    }
-    else {
-      let currentType = kanaType.HIRAGANA;
-      if (wanakana.isKatakana(token)) {
-        token = wanakana.toHiragana(token);
-        currentType = kanaType.KATAKANA;
+    const kanaList = [];
+    tokenLine.forEach((token) => {
+      token = token.trim();
+      if(token === '') {
+        kanaList.push(null);
       }
-      if(JPSYMBOLLIST.indexOf(token) !== -1){
-        if(kanaList.length > 0) {
-          const last = kanaList.pop();
-          if(last != null && last.value.slice(-1) === token) {
-            kanaList.push({
-              type: last.type,
-              value: last.value.substring(0, last.value.length-1)
-            })
+      else {
+        let currentType = kanaType.HIRAGANA;
+        if (wanakana.isKatakana(token)) {
+          token = wanakana.toHiragana(token);
+          currentType = kanaType.KATAKANA;
+        }
+        if(JPSYMBOLLIST.indexOf(token) !== -1){
+          if(kanaList.length > 0) {
+            const last = kanaList.pop();
+            if(last != null && last.value.slice(-1) === token) {
+              kanaList.push({
+                type: last.type,
+                value: last.value.substring(0, last.value.length-1)
+              })
+            }
+            else {
+              kanaList.push(last);
+              let first = hiraganaLine.pop();
+              first = first.substring(1);
+              if(first.length !== 0) {
+                hiraganaLine.push(first);
+              }
+            }
           }
           else {
-            kanaList.push(last);
             let first = hiraganaLine.pop();
             first = first.substring(1);
             if(first.length !== 0) {
               hiraganaLine.push(first);
             }
           }
-        }
-        else {
-          let first = hiraganaLine.pop();
-          first = first.substring(1);
-          if(first.length !== 0) {
-            hiraganaLine.push(first);
-          }
-        }
 
-        kanaList.push({
-          type: kanaType.OTHERS,
-          value: ''
-        });
-      }
-      else if(wanakana.isHiragana(token)) {
-        if(kanaList.length !== 0) {
-          let target = kanaList.pop();
-          let spaceBlock = false;
-          if(target === null && kanaList.length !== 0) {
-            target = kanaList.pop();
-            spaceBlock += true;
+          kanaList.push({
+            type: kanaType.OTHERS,
+            value: ''
+          });
+        }
+        else if(wanakana.isHiragana(token)) {
+          if(kanaList.length !== 0) {
+            let target = kanaList.pop();
+            let spaceBlock = false;
+            if(target === null && kanaList.length !== 0) {
+              target = kanaList.pop();
+              spaceBlock += true;
+            }
+            if(target === null) {
+              kanaList.push(target);
+              let rest = token.length;
+              while(hiraganaLine.length > 0 && rest > 0) {
+                const target = hiraganaLine.pop();
+                if(rest >= target.length){
+                  rest -= target.length;
+                }
+                else {
+                  hiraganaLine.push(target.substring(rest));
+                  break;
+                }
+              }
+              kanaList.push({
+                type: currentType,
+                value: token
+              });
+            }
+            else {
+              const index = target.value.indexOf(token, 1);
+              if(index === -1) {
+                const index = target.value.indexOf(token[0], 1);
+                if(index === -1) {
+                  kanaList.push({
+                    type: target.type,
+                    value: target.value
+                  });
+                  let rest = token.length;
+                  while(hiraganaLine.length > 0 && rest > 0) {
+                    const target = hiraganaLine.pop();
+                    if(rest >= target.length){
+                      rest -= target.length;
+                    }
+                    else {
+                      hiraganaLine.push(target.substring(rest));
+                      break;
+                    }
+                  }
+                  kanaList.push({
+                    type: currentType,
+                    value: token
+                  });
+                }
+                else {
+                  kanaList.push({
+                    type: target.type,
+                    value: target.value.substring(0, index)
+                  });
+                  let rest = token.length - (target.value.length - index);
+                  while(hiraganaLine.length > 0 && rest > 0) {
+                    const target = hiraganaLine.pop();
+                    if(rest >= target.length){
+                      rest -= target.length;
+                    }
+                    else {
+                      hiraganaLine.push(target.substring(rest));
+                      break;
+                    }
+                  }
+                  kanaList.push({
+                    type: currentType,
+                    value: token
+                  });
+                }
+              }
+              else {
+                kanaList.push({
+                  type: target.type,
+                  value: target.value.substring(0, index)
+                });
+                kanaList.push({
+                  type: currentType,
+                  value: token
+                });
+                hiraganaLine.push(target.value.substring(index + token.length));
+              }
+            }
+            if(spaceBlock) {
+              kanaList.push(null);
+            }
           }
-          if(target === null) {
-            kanaList.push(target);
+          else {
             let rest = token.length;
             while(hiraganaLine.length > 0 && rest > 0) {
               const target = hiraganaLine.pop();
@@ -230,106 +291,34 @@ function parseToken(tokenLine, hiraganaLine)
               value: token
             });
           }
-          else {
-            const index = target.value.indexOf(token, 1);
-            if(index === -1) {
-              const index = target.value.indexOf(token[0], 1);
-              if(index === -1) {
-                kanaList.push({
-                  type: target.type,
-                  value: target.value
-                });
-                let rest = token.length;
-                while(hiraganaLine.length > 0 && rest > 0) {
-                  const target = hiraganaLine.pop();
-                  if(rest >= target.length){
-                    rest -= target.length;
-                  }
-                  else {
-                    hiraganaLine.push(target.substring(rest));
-                    break;
-                  }
-                }
-                kanaList.push({
-                  type: currentType,
-                  value: token
-                });
-              }
-              else {
-                kanaList.push({
-                  type: target.type,
-                  value: target.value.substring(0, index)
-                });
-                let rest = token.length - (target.value.length - index);
-                while(hiraganaLine.length > 0 && rest > 0) {
-                  const target = hiraganaLine.pop();
-                  if(rest >= target.length){
-                    rest -= target.length;
-                  }
-                  else {
-                    hiraganaLine.push(target.substring(rest));
-                    break;
-                  }
-                }
-                kanaList.push({
-                  type: currentType,
-                  value: token
-                });
-              }
-            }
-            else {
-              kanaList.push({
-                type: target.type,
-                value: target.value.substring(0, index)
-              });
-              kanaList.push({
-                type: currentType,
-                value: token
-              });
-              hiraganaLine.push(target.value.substring(index + token.length));
-            }
-          }
-          if(spaceBlock) {
-            kanaList.push(null);
-          }
         }
         else {
-          let rest = token.length;
-          while(hiraganaLine.length > 0 && rest > 0) {
-            const target = hiraganaLine.pop();
-            if(rest >= target.length){
-              rest -= target.length;
-            }
-            else {
-              hiraganaLine.push(target.substring(rest));
-              break;
-            }
+          let target = '';
+          while(target === '') {
+            target += hiraganaLine.pop();
           }
+
           kanaList.push({
-            type: currentType,
-            value: token
+            type: wanakana.isKanji(token) ? kanaType.KANJI : kanaType.OTHERS,
+            value: target
           });
         }
       }
-      else {
-        let target = '';
-        while(target === '') {
-          target += hiraganaLine.pop();
-        }
+    })
 
-        kanaList.push({
-          type: wanakana.isKanji(token) ? kanaType.KANJI : kanaType.OTHERS,
-          value: target
-        });
-      }
-    }
-  })
-
-  return tokenLine.map((item, index) => ({
-    kanji: item,
-    type: kanaList[index]?.type,
-    hiragana: kanaList[index]?.value
-  }));
+    return tokenLine.map((item, index) => ({
+      kanji: item,
+      type: kanaList[index]?.type,
+      hiragana: kanaList[index]?.value
+    }));
+  }
+  catch {
+    return tokenLine.map((item, index) => ({
+      kanji: item,
+      type: kanaType.HIRAGANA,
+      hiragana: null
+    }));
+  }
 }
 
 watch(() => props.lyrics, () => {
@@ -364,7 +353,8 @@ watch(() => props.lyrics, () => {
     );
     displayingLyricList.value = tokenizedText.map((tokenLine, index) => {
       const hiraganaLine = props.hiragana[index].replace(' ', '');
-      return parseToken(tokenLine, hiraganaLine);
+      const tokens = parseToken(tokenLine, hiraganaLine);
+      return tokens;
     });
   }
 
