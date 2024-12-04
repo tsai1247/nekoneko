@@ -1,155 +1,155 @@
 <template>
-  <div
-    ref="videoViewRef"
-    :style="{
-      height: videoHeight + 'px',
-      bottom: 65 + 'px'
-    }"
-    :class="`${isRecording ? 'position-fixed ma-2' : ''}`"
-  >
-    <yt-frame
-      ref="playerRef"
-      @on-ended="playerRef?.replayVideo"
-      class="w-100 h-100"
-    ></yt-frame>
-    <div class="my-2">
-      <v-tooltip location="right">
-        <template v-slot:activator="{ props }">
-          <v-btn
-            v-bind="props"
-            icon
-            @click="updateRecordStatus"
-            :color="isRecording && videoId ? `red`: `grey`"
-            :disabled="videoId === null"
+  <div ref="videoViewRef">
+    <v-row>
+      <v-col cols="12">
+        <yt-frame
+          ref="playerRef"
+          @on-ended="playerRef?.replayVideo"
+          :style="{
+            height: videoHeight + 'px',
+          }"
+        ></yt-frame>
+      </v-col>
+      <v-col cols="12">
+        <div>
+          <v-tooltip location="right">
+            <template v-slot:activator="{ props }">
+              <v-btn
+                v-bind="props"
+                icon
+                @click="updateRecordStatus"
+                :color="isRecording && videoId ? `red`: `grey`"
+                :disabled="videoId === null"
+              >
+                <v-icon size="large">
+                  mdi-radiobox-marked
+                </v-icon>
+              </v-btn>
+            </template>
+            <span>Click to record lyrics timeline.</span>
+          </v-tooltip>
+
+          <span
+            v-if="isRecording"
+            class="mx-2"
           >
-            <v-icon size="large">
-              mdi-radiobox-marked
-            </v-icon>
-          </v-btn>
-        </template>
-        <span>Click to record lyrics timeline.</span>
-      </v-tooltip>
-
-      <span
-        v-if="isRecording"
-        class="mx-2"
-      >
-        <v-tooltip location="bottom">
-          <template v-slot:activator="{ props }">
-            <v-icon
-              v-bind="props"
-              size="x-large"
-              class="mx-1"
-              @click="resetRecord"
-            >mdi-home</v-icon>
-          </template>
-          <span>Start from 00:00</span>
-        </v-tooltip>
-        <v-tooltip location="bottom">
-          <template v-slot:activator="{ props }">
-            <v-icon
-              v-bind="props"
-              size="x-large"
-              class="mx-1"
-              @click="stepBack"
-            >mdi-step-backward</v-icon>
-          </template>
-          <span>Back to privious lyrics</span>
-        </v-tooltip>
-        <v-tooltip location="bottom">
-          <template v-slot:activator="{ props }">
-            <v-icon
-              v-bind="props"
-              size="x-large"
-              class="mx-1"
-              @click="setRecord"
-            >mdi-play</v-icon>
-          </template>
-          <span>Record current time</span>
-        </v-tooltip>
-        <v-tooltip location="bottom">
-          <template v-slot:activator="{ props }">
-            <v-icon
-              v-bind="props"
-              size="x-large"
-              class="mx-1"
-              @click="stepForward(5)"
-            >mdi-step-forward</v-icon>
-          </template>
-          <span>Fast forward for 5 seconds</span>
-        </v-tooltip>
-        <v-tooltip location="bottom">
-          <template v-slot:activator="{ props }">
-            <v-icon
-              v-bind="props"
-              size="x-large"
-              class="mx-1"
-              @click="saveRecord"
-            >mdi-content-save</v-icon>
-          </template>
-          <span>Save record</span>
-        </v-tooltip>
-      </span>
-      <span
-        v-else
-        class="mx-2"
-      >
-        <v-tooltip location="bottom">
-          <template v-slot:activator="{ props }">
-            <v-icon
-              v-bind="props"
-              size="x-large"
-              class="mx-1"
-              @click="seekTo(lyricSchedule?.at(0))"
-            >mdi-numeric-1-circle-outline</v-icon>
-          </template>
-          <span>Start from first line</span>
-        </v-tooltip>
-        <v-tooltip location="bottom">
-          <template v-slot:activator="{ props }">
-            <v-icon
-              v-bind="props"
-              size="x-large"
-              class="mx-1"
-              @click="rewind"
-            >mdi-step-backward</v-icon>
-          </template>
-          <span>Rewind for 5 seconds</span>
-        </v-tooltip>
-        <v-tooltip location="bottom">
-          <template v-slot:activator="{ props }">
-            <v-icon
-              v-if="isPlaying()"
-              v-bind="props"
-              size="x-large"
-              class="mx-1"
-              @click="switchVideo"
-            >mdi-pause-circle-outline</v-icon>
-            <v-icon
-              v-else
-              v-bind="props"
-              size="x-large"
-              class="mx-1"
-              @click="switchVideo"
-            >mdi-play-circle-outline</v-icon>
-          </template>
-          <span v-if="isPlaying()">Pause</span>
-          <span v-else>Play</span>
-        </v-tooltip>
-        <v-tooltip location="bottom">
-          <template v-slot:activator="{ props }">
-            <v-icon
-              v-bind="props"
-              size="x-large"
-              class="mx-1"
-              @click="fastForward"
-            >mdi-step-forward</v-icon>
-          </template>
-          <span>Fast forward for 5 seconds</span>
-        </v-tooltip>
-      </span>
-
-    </div>
+            <v-tooltip location="bottom">
+              <template v-slot:activator="{ props }">
+                <v-icon
+                  v-bind="props"
+                  size="x-large"
+                  class="mx-1"
+                  @click="resetRecord"
+                >mdi-home</v-icon>
+              </template>
+              <span>Start from 00:00</span>
+            </v-tooltip>
+            <v-tooltip location="bottom">
+              <template v-slot:activator="{ props }">
+                <v-icon
+                  v-bind="props"
+                  size="x-large"
+                  class="mx-1"
+                  @click="stepBack"
+                >mdi-step-backward</v-icon>
+              </template>
+              <span>Back to privious lyrics</span>
+            </v-tooltip>
+            <v-tooltip location="bottom">
+              <template v-slot:activator="{ props }">
+                <v-icon
+                  v-bind="props"
+                  size="x-large"
+                  class="mx-1"
+                  @click="setRecord"
+                >mdi-play</v-icon>
+              </template>
+              <span>Record current time</span>
+            </v-tooltip>
+            <v-tooltip location="bottom">
+              <template v-slot:activator="{ props }">
+                <v-icon
+                  v-bind="props"
+                  size="x-large"
+                  class="mx-1"
+                  @click="stepForward(5)"
+                >mdi-step-forward</v-icon>
+              </template>
+              <span>Fast forward for 5 seconds</span>
+            </v-tooltip>
+            <v-tooltip location="bottom">
+              <template v-slot:activator="{ props }">
+                <v-icon
+                  v-bind="props"
+                  size="x-large"
+                  class="mx-1"
+                  @click="saveRecord"
+                >mdi-content-save</v-icon>
+              </template>
+              <span>Save record</span>
+            </v-tooltip>
+          </span>
+          <span
+            v-else
+            class="mx-2"
+          >
+            <v-tooltip location="bottom">
+              <template v-slot:activator="{ props }">
+                <v-icon
+                  v-bind="props"
+                  size="x-large"
+                  class="mx-1"
+                  @click="seekTo(lyricSchedule?.at(0))"
+                >mdi-numeric-1-circle-outline</v-icon>
+              </template>
+              <span>Start from first line</span>
+            </v-tooltip>
+            <v-tooltip location="bottom">
+              <template v-slot:activator="{ props }">
+                <v-icon
+                  v-bind="props"
+                  size="x-large"
+                  class="mx-1"
+                  @click="rewind"
+                >mdi-step-backward</v-icon>
+              </template>
+              <span>Rewind for 5 seconds</span>
+            </v-tooltip>
+            <v-tooltip location="bottom">
+              <template v-slot:activator="{ props }">
+                <v-icon
+                  v-if="isPlaying()"
+                  v-bind="props"
+                  size="x-large"
+                  class="mx-1"
+                  @click="switchVideo"
+                >mdi-pause-circle-outline</v-icon>
+                <v-icon
+                  v-else
+                  v-bind="props"
+                  size="x-large"
+                  class="mx-1"
+                  @click="switchVideo"
+                >mdi-play-circle-outline</v-icon>
+              </template>
+              <span v-if="isPlaying()">Pause</span>
+              <span v-else>Play</span>
+            </v-tooltip>
+            <v-tooltip location="bottom">
+              <template v-slot:activator="{ props }">
+                <v-icon
+                  v-bind="props"
+                  size="x-large"
+                  class="mx-1"
+                  @click="fastForward"
+                >mdi-step-forward</v-icon>
+              </template>
+              <span>Fast forward for 5 seconds</span>
+            </v-tooltip>
+          </span>
+        </div>
+      </v-col>
+    </v-row>
 
     <save-recoding-dialog
       :value="showSaveRecodingDialog"

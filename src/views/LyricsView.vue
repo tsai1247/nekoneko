@@ -105,10 +105,6 @@
         </v-virtual-scroll>
       </v-col>
     </v-row>
-    <v-row
-      v-if="isRecording"
-      :style="{height: '230px'}"
-    ></v-row>
   </div>
 </template>
 
