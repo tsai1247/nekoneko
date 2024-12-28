@@ -3,7 +3,7 @@
     <v-row no-gutters>
       <v-col
         cols="4"
-        md="3"
+        md="2"
       >
         <v-checkbox
           v-model="showKanjiKana"
@@ -13,7 +13,7 @@
       </v-col>
       <v-col
         cols="4"
-        md="3"
+        md="2"
       >
         <v-checkbox
           v-model="showKatakanaKana"
@@ -23,7 +23,7 @@
       </v-col>
       <v-col
         cols="4"
-        md="3"
+        md="2"
       >
         <v-checkbox
           v-model="showOtherKana"
@@ -40,6 +40,18 @@
           label="Space Emphasize"
           hide-details
         ></v-checkbox>
+      </v-col>
+      <v-col
+        cols="4"
+        md="3"
+      >
+        <v-text-field
+          v-model.number="lyricsForwordSeconds"
+          type="number"
+          label="Seconds ahead of music"
+          placeholder="e.g. 0.7"
+        >
+        </v-text-field>
       </v-col>
     </v-row>
 
@@ -377,18 +389,18 @@ const isRead = (index) => {
 
   if(props.lyricSchedule) {
     if(index+1 < props.lyricSchedule.length) {
-      return props.lyricSchedule[index + 1] - LYRIC_FORARD_SECONDS <= props.currentTime;
+      return props.lyricSchedule[index + 1] - lyricsForwordSeconds <= props.currentTime;
     }
   }
 
   return false;
 }
 
-const LYRIC_FORARD_SECONDS = 0.7;
+const lyricsForwordSeconds = ref(0.7);
 const goTo = (index) => {
   if(props.lyricSchedule) {
     if(index < props.lyricSchedule.length) {
-      emits('seek-to', props.lyricSchedule[index] - LYRIC_FORARD_SECONDS);
+      emits('seek-to', props.lyricSchedule[index] - lyricsForwordSeconds);
     }
   }
 }
@@ -404,8 +416,8 @@ const isReading = (index) => {
       const nextLyricSceonds = (index + 1 < props.lyricSchedule.length)
         ? props.lyricSchedule[index + 1] : Number.MAX_SAFE_INTEGER;
 
-      return lyricSeconds - LYRIC_FORARD_SECONDS <= props.currentTime
-        && props.currentTime <= nextLyricSceonds - LYRIC_FORARD_SECONDS;
+      return lyricSeconds - lyricsForwordSeconds <= props.currentTime
+        && props.currentTime <= nextLyricSceonds - lyricsForwordSeconds;
     }
   }
 
