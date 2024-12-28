@@ -44,11 +44,11 @@ import { computed } from 'vue'
   })
 
   const textColor = computed(() => {
-    if (props.isRead) {
-      return 'blue-grey-darken-1';
-    }
     if (props.isReading) {
       return 'indigo-darken-1';
+    }
+    if (props.isRead) {
+      return 'blue-grey-darken-1';
     }
     return 'black';
   })

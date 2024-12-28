@@ -377,17 +377,18 @@ const isRead = (index) => {
 
   if(props.lyricSchedule) {
     if(index+1 < props.lyricSchedule.length) {
-      return props.lyricSchedule[index + 1] <= props.currentTime;
+      return props.lyricSchedule[index + 1] - LYRIC_FORARD_SECONDS <= props.currentTime;
     }
   }
 
   return false;
 }
 
+const LYRIC_FORARD_SECONDS = 0.7;
 const goTo = (index) => {
   if(props.lyricSchedule) {
     if(index < props.lyricSchedule.length) {
-      emits('seek-to', props.lyricSchedule[index]);
+      emits('seek-to', props.lyricSchedule[index] - LYRIC_FORARD_SECONDS);
     }
   }
 }
@@ -403,7 +404,8 @@ const isReading = (index) => {
       const nextLyricSceonds = (index + 1 < props.lyricSchedule.length)
         ? props.lyricSchedule[index + 1] : Number.MAX_SAFE_INTEGER;
 
-      return lyricSeconds <= props.currentTime && props.currentTime <= nextLyricSceonds;
+      return lyricSeconds - LYRIC_FORARD_SECONDS <= props.currentTime
+        && props.currentTime <= nextLyricSceonds - LYRIC_FORARD_SECONDS;
     }
   }
 
