@@ -30,6 +30,7 @@
         :style="{height: '450px'}"
       >
         <lyrics-view
+          :id="lyricsId"
           :lyrics="lyrics"
           :hiragana="hiragana"
           :timeline="timelineList"
@@ -37,6 +38,7 @@
           :lyricSchedule="lyricSchedule"
           :currentTime="currentTime"
           @seek-to="seekTo"
+          @update:schedule="updateSchedule"
         ></lyrics-view>
       </v-col>
     </v-row>

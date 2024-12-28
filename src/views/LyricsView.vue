@@ -3,7 +3,7 @@
     <v-row no-gutters>
       <v-col
         cols="4"
-        md="3"
+        md="2"
       >
         <v-checkbox
           v-model="showKanjiKana"
@@ -13,7 +13,7 @@
       </v-col>
       <v-col
         cols="4"
-        md="3"
+        md="2"
       >
         <v-checkbox
           v-model="showKatakanaKana"
@@ -23,7 +23,7 @@
       </v-col>
       <v-col
         cols="4"
-        md="3"
+        md="2"
       >
         <v-checkbox
           v-model="showOtherKana"
@@ -40,6 +40,18 @@
           label="Space Emphasize"
           hide-details
         ></v-checkbox>
+      </v-col>
+      <v-col
+        cols="4"
+        md="3"
+      >
+        <v-text-field
+          v-model.number="lyricsForwordSeconds"
+          type="number"
+          label="Seconds ahead of music"
+          placeholder="e.g. 0.7"
+        >
+        </v-text-field>
       </v-col>
     </v-row>
 
@@ -85,6 +97,33 @@
                 ></core-ruby>
               </span>
             </span>
+
+            <span v-show="isReading(index) || isReading(index-1) || isReading(index+1)">
+              <v-tooltip location="top">
+                <template v-slot:activator="{ props }">
+                  <span v-bind="props">
+                    <v-icon
+                      class="button-press"
+                      size="small"
+                      @click="setEarlier(index)"
+                    >mdi-menu-left</v-icon>
+                  </span>
+                </template>
+                <span>Show this line earlier.</span>
+              </v-tooltip>
+              <v-tooltip location="top">
+                <template v-slot:activator="{ props }">
+                  <span v-bind="props">
+                    <v-icon
+                      class="button-press"
+                      size="small"
+                      @click="setLater(index)"
+                    >mdi-menu-right</v-icon>
+                  </span>
+                </template>
+                <span>Show this line later.</span>
+              </v-tooltip>
+            </span>
           </div>
         </template>
       </v-virtual-scroll>
@@ -97,8 +136,11 @@ import { onMounted, ref, computed, watch } from 'vue';
 import * as wanakana from 'wanakana';
 import { kanaType } from '@/common/constant/enums';
 import coreRuby from "@/components/coreRuby.vue";
+import { lyricsDB } from '@/common/indexedDB';
+import { debounce } from '@/common/utility';
 
 const props = defineProps({
+  id: Number,
   lyrics: String,
   hiragana: Array,
   isRecording: Boolean,
@@ -109,6 +151,7 @@ const props = defineProps({
 
 const emits = defineEmits([
   'seek-to',
+  'update:schedule'
 ])
 
 const defaultShowKanjiKana = localStorage.getItem('lyrics.showKanjiKana');
@@ -376,18 +419,19 @@ const isRead = (index) => {
   }
 
   if(props.lyricSchedule) {
-    if(index+1 < props.lyricSchedule.length) {
-      return props.lyricSchedule[index + 1] <= props.currentTime;
+    if(0 <= index && index + 1 < props.lyricSchedule.length) {
+      return props.lyricSchedule[index + 1] - lyricsForwordSeconds.value <= props.currentTime;
     }
   }
 
   return false;
 }
 
+const lyricsForwordSeconds = ref(0.7);
 const goTo = (index) => {
   if(props.lyricSchedule) {
     if(index < props.lyricSchedule.length) {
-      emits('seek-to', props.lyricSchedule[index]);
+      emits('seek-to', props.lyricSchedule[index] - lyricsForwordSeconds.value);
     }
   }
 }
@@ -398,16 +442,35 @@ const isReading = (index) => {
   }
 
   if(props.lyricSchedule) {
-    if(index < props.lyricSchedule.length) {
+    if(0 <= index && index < props.lyricSchedule.length) {
       const lyricSeconds = props.lyricSchedule[index];
       const nextLyricSceonds = (index + 1 < props.lyricSchedule.length)
         ? props.lyricSchedule[index + 1] : Number.MAX_SAFE_INTEGER;
 
-      return lyricSeconds <= props.currentTime && props.currentTime <= nextLyricSceonds;
+      return lyricSeconds - lyricsForwordSeconds.value <= props.currentTime
+        && props.currentTime <= nextLyricSceonds - lyricsForwordSeconds.value;
     }
   }
 
   return false;
+}
+
+const debouncedGoTo = debounce(goTo, 700);
+
+const setEarlier = async (index) => {
+  const lyrics = await lyricsDB.getById(props.id);
+  lyrics.lyricSchedule[index] -= 0.1;
+  await lyricsDB.update(lyrics.id, lyrics.name, lyrics.singer, lyrics.format, lyrics.lyrics, lyrics.hiragana, lyrics.youtube, lyrics.lyricSchedule);
+  emits('update:schedule', lyrics.lyricSchedule);
+  debouncedGoTo(index);
+};
+
+const setLater = async (index) => {
+  const lyrics = await lyricsDB.getById(props.id);
+  lyrics.lyricSchedule[index] += 0.1;
+  await lyricsDB.update(lyrics.id, lyrics.name, lyrics.singer, lyrics.format, lyrics.lyrics, lyrics.hiragana, lyrics.youtube, lyrics.lyricSchedule);
+  emits('update:schedule', lyrics.lyricSchedule);
+  debouncedGoTo(index);
 }
 
 </script>
@@ -423,5 +486,16 @@ const isReading = (index) => {
   .clickable {
     cursor: pointer;
     user-select: none;
+  }
+
+  .button-press {
+    cursor: pointer;
+    transition: all 0.1s ease;
+    user-select: none;
+  }
+
+  .button-press:active {
+    transform: translateY(2px);
+    opacity: 0.8;
   }
 </style>
