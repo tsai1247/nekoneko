@@ -7,3 +7,4 @@ npm version minor
 git push
 git sw develop
 git rebase main
+git push
